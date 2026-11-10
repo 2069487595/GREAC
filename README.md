@@ -3,7 +3,7 @@
 Code that produced **GREAC v1.0**, a global dataset of elevation–area–capacity curves and 30 m bathymetry for 28,481 reservoirs derived from digital elevation models.
 
 - **Dataset:** https://doi.org/10.5281/zenodo.24097990 (CC BY-NC-SA 4.0)
-- **Code archive:** all versions at https://doi.org/10.5281/zenodo.24110168 (v1.0: https://doi.org/10.5281/zenodo.24110169)
+- **Code archive:** all versions at https://doi.org/10.5281/zenodo.24110168 (v1.0.1: https://doi.org/10.5281/zenodo.24114902; v1.0: https://doi.org/10.5281/zenodo.24110169)
 - **Changes:** v1.0.1 adds the attribute `flag_empty_extent` to the data package (`greac_package_v1.py`).
 - **Paper:** GREAC: global reservoir elevation–area–capacity curves and 30 m bathymetry for 28,481 reservoirs from digital elevation models (submitted to *Earth System Science Data*).
 
