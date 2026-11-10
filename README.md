@@ -3,6 +3,7 @@
 Code that produced **GREAC v1.0**, a global dataset of elevation–area–capacity curves and 30 m bathymetry for 28,481 reservoirs derived from digital elevation models.
 
 - **Dataset:** https://doi.org/10.5281/zenodo.24097990 (CC BY-NC-SA 4.0)
+- **Code archive:** v1.0 at https://doi.org/10.5281/zenodo.24110169 (all versions: https://doi.org/10.5281/zenodo.24110168)
 - **Paper:** GREAC: global reservoir elevation–area–capacity curves and 30 m bathymetry for 28,481 reservoirs from digital elevation models (submitted to *Earth System Science Data*).
 
 The scripts are the versions that were run, in the layout of the original project. Paths are built from the repository root (`ROOT`), so they work unchanged once the input data are placed as described below. Only absolute paths of the original machine were replaced ([PATH_CHANGES.md](PATH_CHANGES.md)); [FILES.tsv](FILES.tsv) gives the SHA-256 of each source file.
