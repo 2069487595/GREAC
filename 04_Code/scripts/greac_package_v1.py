@@ -6,6 +6,7 @@ integration extent of their curves: R for the reconstructed line and the directl
 the k = 1 run (small_tier_v1 widen: z = FABDEM with F replaced by the bed). Cells below H_top that the curves leave out
 (not 8-connected to the water surface W0 | F, or to the seed of a floor) are NoData, so summing (H_top - z) over the valid
 cells reproduces V_top. H_flat, H_seed and H_top are the exact levels of the run records (the summaries round them to 0.01 m).
+2026-11-10: attribute flag_empty_extent (R_km2 = 0: seven reservoirs without bed raster, zero area and storage).
 
 Subcommands
   attributes  upload/greac_attributes.csv; checks against the inventory, numbers.json and Table 2 of the draft
@@ -73,7 +74,7 @@ SUB = {
 }
 LINE = {'rec': 'reconstructed', 'small': 'small_tier', 'floor': 'direct_floor'}
 FLAGS = ['flag_seed_gap', 'flag_no_dam_height', 'flag_area_beyond', 'flag_FW0_beyond', 'flag_RW0_beyond', 'flag_Ddam_beyond',
-         'flag_poly_not_swbd', 'flag_tiny', 'flag_built_before_2000']
+         'flag_poly_not_swbd', 'flag_tiny', 'flag_built_before_2000', 'flag_empty_extent']
 COLS = ['greac_id', 'product_line', 'sub_line', 'hylak_id', 'hydrolakes_version', 'gdw_ids', 'country', 'lon', 'lat', 'area_km2',
         'H_flat_m', 'H_seed_m', 'H_top_m', 'seed_gap_m', 'D_dam_m', 'regime', 'F_km2', 'W0_km2', 'R_km2', 'A_top_km2', 'V_top_km3',
         'V_top_tccap_km3'] + FLAGS + ['quality_class']
@@ -177,7 +178,7 @@ def build_attributes():
             for k in ['H_seed_m', 'seed_gap_m', 'D_dam_m', 'W0_km2', 'V_top_tccap_km3']:
                 t[k] = np.nan
             t['regime'] = None
-            for k in FLAGS[:-1]:
+            for k in FLAGS[:8]:              # all but flag_built_before_2000 and flag_empty_extent
                 t[k] = na_int8(n)
             t['flag_built_before_2000'] = flagged(s.flag_built_before_2000.astype(bool))
             assert (s.flag_built_before_2000.astype(bool).values == i.flag_built_before_2000.astype(bool).values).all(), sub
@@ -193,6 +194,8 @@ def build_attributes():
         assert set(ids.index) == set(keys) and len(keys) == len(set(keys)), sub
         t['gdw_ids'] = ids.loc[keys].values; t['country'] = ctry.loc[keys].values
         used.append(p.GDW_ID)
+        # 2026-11-10 (review N06): empty maximum extent R, so zero area and storage and no bed raster; not a product
+        t['flag_empty_extent'] = flagged(t.R_km2.values == 0)
         out.append(t[COLS])
     a = pd.concat(out, ignore_index=True)
     used = pd.concat(used)
@@ -213,13 +216,15 @@ def cmd_attributes():
                          **{k: int(core[k].sum()) for k in FLAGS[:7]}),
         seed_gap_reconstruction_lines=[int(recon.flag_seed_gap.sum()), int(len(recon))],
         classes=sm.quality_class.value_counts().sort_index().to_dict(),
-        built_before_2000=[int(fl.flag_built_before_2000.sum()), int(len(fl))])
+        built_before_2000=[int(fl.flag_built_before_2000.sum()), int(len(fl))],
+        empty_extent=a.greac_id[a.flag_empty_extent == 1].astype(int).tolist())
     assert chk['n'] == num['n_total'] == 28481 and chk['n_by_sub_line'] == num['n_by_sub_line']
     assert chk['gdw_records'] == num['coverage']['total']['records'] and chk['countries'] == num['coverage']['countries'] == 163
     assert chk['table2_core'] == dict(high=3485, low=1683, flag_seed_gap=1389, flag_no_dam_height=496, flag_area_beyond=267,
                                       flag_FW0_beyond=219, flag_RW0_beyond=262, flag_Ddam_beyond=72, flag_poly_not_swbd=897), chk['table2_core']
     assert chk['seed_gap_reconstruction_lines'] == [4505, 26457] and chk['classes'] == {'A': 4847, 'B': 7503, 'C': 5147}
     assert chk['built_before_2000'] == [144, 2024]
+    assert chk['empty_extent'] == [8405, 9717, 10952, 11263, 12323, 12332, 21199], chk['empty_extent']
     assert a.greac_id.tolist() == list(range(1, len(a) + 1)) and a.gdw_ids.str.len().gt(0).all() and a.country.str.len().gt(0).all()
     # levels at full precision: H_top is the elevation of DEM water cells, and rounding it would leave those cells dry
     out = a.copy()
@@ -485,6 +490,7 @@ def cmd_finish():
     beds['V_rel_diff_max'] = float(rel.abs().max())
     assert beds['V_rel_diff_median'] < 1e-5 and beds['V_rel_diff_max'] < 1e-3, beds
     empty = set(beds['no_raster_empty_extent'])
+    assert empty == set(a.greac_id[a.flag_empty_extent == 1]), 'flag_empty_extent differs from the rasters'
     # archives of at most ZIP_MAX bytes (user 2026-11-10: a 1.08 GB file may break off in the browser upload),
     # beds_<line>_<k>.zip in greac_id order
     for old in UP.glob('beds_*.zip'):
