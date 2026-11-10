@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+02_Data_Raw/
+03_Data_Processed/
+05_Results/
+10_References/
+04_Code/versions/Tao-original/FROZEN-20260921/project/10_References/
+04_Code/versions/.runtime_cache/

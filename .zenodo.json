@@ -1,0 +1,23 @@
+{
+  "upload_type": "software",
+  "title": "GREAC code v1.0: production scripts of the Global Reservoir Elevation–Area–Capacity dataset",
+  "version": "1.0",
+  "description": "Code that produced GREAC v1.0, a global dataset of elevation–area–capacity curves and 30 m bathymetry for 28,481 reservoirs derived from digital elevation models (FABDEM, NASADEM) and the Landsat surface-water record: regions and water levels, topographic-continuity reconstruction with the dam-height depth scale, SRTM-recorded floors, small-reservoir tier, indicators and the data package, as they were run. See README.md for the workflow and the input data.",
+  "creators": [
+    {
+      "name": "Ning, Chuanwei",
+      "affiliation": "School of Geographical Sciences, Southwest University"
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": [
+    "reservoir",
+    "bathymetry",
+    "elevation–area–capacity curve",
+    "digital elevation model",
+    "topographic continuity",
+    "FABDEM",
+    "global dataset"
+  ]
+}
